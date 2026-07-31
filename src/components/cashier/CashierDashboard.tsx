@@ -46,7 +46,7 @@ export const CashierDashboard: React.FC = () => {
             </div>
           </div>
           <div className="text-lg font-bold text-emerald-400">
-            {settings.currencySymbol}{todayRevenue.toFixed(2)}
+            {todayRevenue.toFixed(2)} {settings.currencySymbol}
           </div>
           <p className="text-[10px] text-slate-400 mt-0.5">Processed today</p>
         </div>
@@ -136,7 +136,7 @@ export const CashierDashboard: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <div className="font-bold text-xs text-emerald-400">
-                    {settings.currencySymbol}{sale.totalAmount.toFixed(2)}
+                    {sale.totalAmount.toFixed(2)} {settings.currencySymbol}
                   </div>
                   <span className="text-[9px] text-slate-400 font-medium">Receipt</span>
                 </div>

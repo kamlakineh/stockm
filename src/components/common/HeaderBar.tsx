@@ -19,10 +19,14 @@ export const HeaderBar: React.FC = () => {
     role,
     settings,
     notifications,
+    profiles,
+    cashiers,
     currentCashier,
     isAuthenticated,
     logout,
   } = useStore();
+
+  const ownerProfile = (profiles || cashiers || []).find(p => p.role === 'OWNER');
 
   const [showNotifDrawer, setShowNotifDrawer] = useState(false);
 
@@ -82,7 +86,7 @@ export const HeaderBar: React.FC = () => {
                   </div>
                   <div className="text-left hidden xs:block">
                     <div className="font-semibold leading-tight text-xs">
-                      {role === 'OWNER' ? 'Sarah Jenkins' : currentCashier.name}
+                      {role === 'OWNER' ? (ownerProfile?.name || 'Owner Admin') : currentCashier.name}
                     </div>
                     <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                       {role === 'OWNER' ? 'Owner Admin' : 'Cashier POS'}

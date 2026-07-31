@@ -222,7 +222,7 @@ export const CashierPOS: React.FC = () => {
                     </div>
                     <div className="mt-1.5 pt-1.5 border-t border-slate-800/80 flex items-center justify-between">
                       <span className="font-extrabold text-[11px] text-emerald-400">
-                        {settings.currencySymbol}{prod.sellingPrice.toFixed(2)}
+                        {prod.sellingPrice.toFixed(2)} {settings.currencySymbol}
                       </span>
                       <span className="p-0.5 bg-emerald-600/20 text-emerald-400 rounded-md">
                         <Plus className="w-3 h-3" />
@@ -253,7 +253,7 @@ export const CashierPOS: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-xs text-emerald-400">
-                      {settings.currencySymbol}{prod.sellingPrice.toFixed(2)}
+                      {prod.sellingPrice.toFixed(2)} {settings.currencySymbol}
                     </span>
                     <button className="p-1 bg-emerald-600 text-white rounded text-xs font-bold">
                       <Plus className="w-3.5 h-3.5" />
@@ -315,7 +315,7 @@ export const CashierPOS: React.FC = () => {
                     <div className="flex-1 pr-2">
                       <div className="font-semibold text-slate-200 line-clamp-1">{item.productName}</div>
                       <div className="text-[10px] text-emerald-400 font-bold">
-                        {settings.currencySymbol}{item.unitPrice.toFixed(2)} x {item.quantity} = {settings.currencySymbol}{item.subtotal.toFixed(2)}
+                        {item.unitPrice.toFixed(2)} {settings.currencySymbol} x {item.quantity} = {item.subtotal.toFixed(2)} {settings.currencySymbol}
                       </div>
                     </div>
 
@@ -346,21 +346,21 @@ export const CashierPOS: React.FC = () => {
             <div className="space-y-1.5 text-xs text-slate-300">
               <div className="flex justify-between">
                 <span className="text-slate-400">Subtotal</span>
-                <span>{settings.currencySymbol}{cartSubtotal.toFixed(2)}</span>
+                <span>{cartSubtotal.toFixed(2)} {settings.currencySymbol}</span>
               </div>
               {cartDiscount > 0 && (
                 <div className="flex justify-between text-emerald-400">
                   <span>Discount ({cartDiscountReason})</span>
-                  <span>-{settings.currencySymbol}{cartDiscount.toFixed(2)}</span>
+                  <span>-{cartDiscount.toFixed(2)} {settings.currencySymbol}</span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span className="text-slate-400">Tax ({settings.taxPercent}%)</span>
-                <span>{settings.currencySymbol}{cartTax.toFixed(2)}</span>
+                <span>{cartTax.toFixed(2)} {settings.currencySymbol}</span>
               </div>
               <div className="flex justify-between font-black text-base text-white pt-2 border-t border-slate-800">
                 <span>GRAND TOTAL</span>
-                <span className="text-emerald-400">{settings.currencySymbol}{cartTotal.toFixed(2)}</span>
+                <span className="text-emerald-400">{cartTotal.toFixed(2)} {settings.currencySymbol}</span>
               </div>
             </div>
 
@@ -393,7 +393,7 @@ export const CashierPOS: React.FC = () => {
               disabled={cart.length === 0}
               className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-2xl shadow-xl shadow-emerald-600/30 text-sm flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
             >
-              CHECKOUT ({settings.currencySymbol}{cartTotal.toFixed(2)})
+              CHECKOUT ({cartTotal.toFixed(2)} {settings.currencySymbol})
             </button>
           </div>
         </div>
@@ -411,7 +411,7 @@ export const CashierPOS: React.FC = () => {
             </button>
 
             <h3 className="font-bold text-lg text-slate-100 mb-1">Process Payment</h3>
-            <p className="text-xs text-slate-400 mb-4">Total Amount Due: <span className="font-bold text-emerald-400 text-sm">{settings.currencySymbol}{cartTotal.toFixed(2)}</span></p>
+            <p className="text-xs text-slate-400 mb-4">Total Amount Due: <span className="font-bold text-emerald-400 text-sm">{cartTotal.toFixed(2)} {settings.currencySymbol}</span></p>
 
             {/* Payment Tabs */}
             <div className="grid grid-cols-3 gap-2 mb-4">
@@ -476,7 +476,7 @@ export const CashierPOS: React.FC = () => {
                 <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700 flex items-center justify-between">
                   <span className="text-xs text-slate-400 font-medium">Change Returned:</span>
                   <span className="font-black text-lg text-emerald-400">
-                    {settings.currencySymbol}{changeGiven.toFixed(2)}
+                    {changeGiven.toFixed(2)} {settings.currencySymbol}
                   </span>
                 </div>
               </div>

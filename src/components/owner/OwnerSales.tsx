@@ -206,10 +206,10 @@ export const OwnerSales: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-3 px-3 font-bold text-emerald-400">
-                      {settings.currencySymbol}{sale.totalAmount.toFixed(2)}
+                      {sale.totalAmount.toFixed(2)} {settings.currencySymbol}
                     </td>
                     <td className="py-3 px-3 font-semibold text-slate-300">
-                      {settings.currencySymbol}{sale.profitAmount.toFixed(2)}
+                      {sale.profitAmount.toFixed(2)} {settings.currencySymbol}
                     </td>
                     <td className="py-3 px-3">
                       {sale.status === 'COMPLETED' ? (
@@ -273,7 +273,7 @@ export const OwnerSales: React.FC = () => {
                   </div>
                   <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
                     <span className="font-bold text-sm text-emerald-400">
-                      {settings.currencySymbol}{h.subtotal.toFixed(2)}
+                      {h.subtotal.toFixed(2)} {settings.currencySymbol}
                     </span>
                     <button
                       onClick={() => {
@@ -316,7 +316,7 @@ export const OwnerSales: React.FC = () => {
               <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/80">
                 <div className="flex justify-between font-semibold text-slate-200">
                   <span>Refund Amount:</span>
-                  <span className="text-rose-400 font-bold">{settings.currencySymbol}{refundTargetSale.totalAmount.toFixed(2)}</span>
+                  <span className="text-rose-400 font-bold">{refundTargetSale.totalAmount.toFixed(2)} {settings.currencySymbol}</span>
                 </div>
                 <div className="text-[11px] text-slate-400 mt-1">
                   Cashier: {refundTargetSale.cashierName} • {refundTargetSale.items.length} item(s)

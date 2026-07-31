@@ -169,6 +169,62 @@ app.post('/api/sync-state', async (req, res) => {
           ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data;
         `;
       }
+
+      if (categories && Array.isArray(categories)) {
+        for (const cat of categories) {
+          await sql`
+            INSERT INTO categories (id, name, description, item_count, is_hidden, sort_order)
+            VALUES (${cat.id}, ${cat.name}, ${cat.description || ''}, ${cat.itemCount || 0}, ${cat.isHidden || false}, ${cat.sortOrder || 0})
+            ON CONFLICT (id) DO UPDATE SET
+              name = EXCLUDED.name,
+              description = EXCLUDED.description,
+              item_count = EXCLUDED.item_count,
+              is_hidden = EXCLUDED.is_hidden,
+              sort_order = EXCLUDED.sort_order;
+          `;
+        }
+      }
+
+      if (suppliers && Array.isArray(suppliers)) {
+        for (const sup of suppliers) {
+          await sql`
+            INSERT INTO suppliers (id, name, contact_person, phone, email, address, status, supplied_count)
+            VALUES (${sup.id}, ${sup.name}, ${sup.contactPerson || ''}, ${sup.phone || ''}, ${sup.email || ''}, ${sup.address || ''}, ${sup.status || 'ACTIVE'}, ${sup.suppliedCount || 0})
+            ON CONFLICT (id) DO UPDATE SET
+              name = EXCLUDED.name,
+              contact_person = EXCLUDED.contact_person,
+              phone = EXCLUDED.phone,
+              email = EXCLUDED.email,
+              address = EXCLUDED.address,
+              status = EXCLUDED.status,
+              supplied_count = EXCLUDED.supplied_count;
+          `;
+        }
+      }
+
+      if (products && Array.isArray(products)) {
+        for (const prod of products) {
+          await sql`
+            INSERT INTO products (id, name, barcode, category_id, category_name, supplier_id, supplier_name, cost_price, selling_price, stock_quantity, min_stock_level, image_url, is_active, created_at, updated_at)
+            VALUES (${prod.id}, ${prod.name}, ${prod.barcode}, ${prod.categoryId}, ${prod.categoryName}, ${prod.supplierId}, ${prod.supplierName}, ${prod.costPrice}, ${prod.sellingPrice}, ${prod.stockQuantity}, ${prod.minStockLevel}, ${prod.imageUrl || ''}, ${prod.isActive}, ${prod.createdAt}, ${prod.updatedAt})
+            ON CONFLICT (id) DO UPDATE SET
+              name = EXCLUDED.name,
+              barcode = EXCLUDED.barcode,
+              category_id = EXCLUDED.category_id,
+              category_name = EXCLUDED.category_name,
+              supplier_id = EXCLUDED.supplier_id,
+              supplier_name = EXCLUDED.supplier_name,
+              cost_price = EXCLUDED.cost_price,
+              selling_price = EXCLUDED.selling_price,
+              stock_quantity = EXCLUDED.stock_quantity,
+              min_stock_level = EXCLUDED.min_stock_level,
+              image_url = EXCLUDED.image_url,
+              is_active = EXCLUDED.is_active,
+              updated_at = EXCLUDED.updated_at;
+          `;
+        }
+      }
+
       if (targetProfiles && Array.isArray(targetProfiles)) {
         for (const profile of targetProfiles) {
           await sql`
@@ -190,6 +246,39 @@ app.post('/api/sync-state', async (req, res) => {
               current_shift_started_at = EXCLUDED.current_shift_started_at,
               today_sales_count = EXCLUDED.today_sales_count,
               today_sales_total = EXCLUDED.today_sales_total;
+          `;
+        }
+      }
+
+      if (sales && Array.isArray(sales)) {
+        for (const s of sales) {
+          await sql`
+            INSERT INTO sales (id, receipt_no, cashier_id, cashier_name, items, subtotal, tax_amount, discount_amount, discount_reason, total_amount, cost_amount, profit_amount, payment_method, amount_tendered, change_given, status, refund_reason, refund_approved_by, created_at)
+            VALUES (${s.id}, ${s.receiptNo}, ${s.cashierId}, ${s.cashierName}, ${JSON.stringify(s.items)}, ${s.subtotal}, ${s.taxAmount}, ${s.discountAmount}, ${s.discountReason || ''}, ${s.totalAmount}, ${s.costAmount}, ${s.profitAmount}, ${s.paymentMethod}, ${s.amountTendered}, ${s.changeGiven}, ${s.status}, ${s.refundReason || ''}, ${s.refundApprovedBy || ''}, ${s.createdAt})
+            ON CONFLICT (id) DO UPDATE SET
+              status = EXCLUDED.status,
+              refund_reason = EXCLUDED.refund_reason,
+              refund_approved_by = EXCLUDED.refund_approved_by;
+          `;
+        }
+      }
+
+      if (stockMovements && Array.isArray(stockMovements)) {
+        for (const sm of stockMovements) {
+          await sql`
+            INSERT INTO stock_movements (id, product_id, product_name, type, quantity_change, previous_quantity, new_quantity, reason, performed_by, created_at)
+            VALUES (${sm.id}, ${sm.productId}, ${sm.productName}, ${sm.type}, ${sm.quantityChange}, ${sm.previousQuantity}, ${sm.newQuantity}, ${sm.reason}, ${sm.performedBy}, ${sm.createdAt})
+            ON CONFLICT (id) DO NOTHING;
+          `;
+        }
+      }
+
+      if (activityLogs && Array.isArray(activityLogs)) {
+        for (const al of activityLogs) {
+          await sql`
+            INSERT INTO activity_logs (id, action, user_name, role, details, created_at)
+            VALUES (${al.id}, ${al.action}, ${al.user}, ${al.role}, ${al.details}, ${al.createdAt})
+            ON CONFLICT (id) DO NOTHING;
           `;
         }
       }
@@ -321,6 +410,65 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 
   res.json({ success: true });
+});
+
+app.delete('/api/categories/:id', async (req, res) => {
+  const id = req.params.id;
+  memoryStore.categories = memoryStore.categories.filter(c => c.id !== id);
+
+  const sql = getNeonSql();
+  if (sql) {
+    try {
+      await sql`DELETE FROM categories WHERE id = ${id};`;
+    } catch (err) {
+      console.error('Error deleting category from Neon:', err);
+    }
+  }
+
+  res.json({ success: true });
+});
+
+app.delete('/api/suppliers/:id', async (req, res) => {
+  const id = req.params.id;
+  memoryStore.suppliers = memoryStore.suppliers.filter(s => s.id !== id);
+
+  const sql = getNeonSql();
+  if (sql) {
+    try {
+      await sql`DELETE FROM suppliers WHERE id = ${id};`;
+    } catch (err) {
+      console.error('Error deleting supplier from Neon:', err);
+    }
+  }
+
+  res.json({ success: true });
+});
+
+// 5. Reset Store Database
+app.post('/api/reset', async (req, res) => {
+  memoryStore = {
+    categories: [...initialCategories],
+    suppliers: [...initialSuppliers],
+    products: [...initialProducts],
+    profiles: [...initialCashiers],
+    cashiers: [...initialCashiers],
+    sales: [...initialSales],
+    stockMovements: [...initialStockMovements],
+    activityLogs: [...initialActivityLogs],
+    settings: { ...initialSettings }
+  };
+
+  const sql = getNeonSql();
+  if (sql) {
+    try {
+      await sql`TRUNCATE TABLE categories, suppliers, products, profiles, sales, stock_movements, activity_logs, settings;`;
+      await initNeonDb();
+    } catch (e) {
+      console.error('Reset Neon error:', e);
+    }
+  }
+
+  res.json({ success: true, data: memoryStore });
 });
 
 // 5. UploadThing Image Upload Endpoint

@@ -169,7 +169,7 @@ export const OwnerDashboard: React.FC = () => {
             </div>
           </div>
           <div className="text-xs sm:text-sm font-extrabold text-white truncate">
-            {settings.currencySymbol}{totalRevenue.toFixed(2)}
+            {totalRevenue.toFixed(2)} {settings.currencySymbol}
           </div>
           <div className="text-[9px] text-emerald-400 font-medium flex items-center gap-0.5 mt-0.5 truncate">
             <ArrowUpRight className="w-2.5 h-2.5 shrink-0" />
@@ -186,7 +186,7 @@ export const OwnerDashboard: React.FC = () => {
             </div>
           </div>
           <div className="text-xs sm:text-sm font-extrabold text-white truncate">
-            {settings.currencySymbol}{todaySales.toFixed(2)}
+            {todaySales.toFixed(2)} {settings.currencySymbol}
           </div>
           <div className="text-[9px] text-slate-400 mt-0.5 truncate">
             Daily POS
@@ -202,7 +202,7 @@ export const OwnerDashboard: React.FC = () => {
             </div>
           </div>
           <div className="text-xs sm:text-sm font-extrabold text-emerald-400 truncate">
-            {settings.currencySymbol}{totalProfit.toFixed(2)}
+            {totalProfit.toFixed(2)} {settings.currencySymbol}
           </div>
           <div className="text-[9px] text-slate-400 mt-0.5 truncate">
             Gross Margin
@@ -260,7 +260,7 @@ export const OwnerDashboard: React.FC = () => {
             </div>
           </div>
           <div className="text-xs sm:text-sm font-extrabold text-white truncate">
-            {settings.currencySymbol}{inventoryTotalValue.toFixed(2)}
+            {inventoryTotalValue.toFixed(2)} {settings.currencySymbol}
           </div>
           <div className="text-[9px] text-slate-400 mt-0.5 truncate">Stock value</div>
         </div>
@@ -288,7 +288,7 @@ export const OwnerDashboard: React.FC = () => {
             </div>
           </div>
           <div className="text-xs sm:text-sm font-extrabold text-white truncate">
-            {settings.currencySymbol}{monthlyRevenue.toFixed(2)}
+            {monthlyRevenue.toFixed(2)} {settings.currencySymbol}
           </div>
           <div className="text-[9px] text-slate-400 mt-0.5 truncate">Turnover</div>
         </div>
@@ -382,7 +382,7 @@ export const OwnerDashboard: React.FC = () => {
                     </div>
                   </div>
                   <div className="font-bold text-[11px] text-emerald-400">
-                    {settings.currencySymbol}{item.revenue.toFixed(2)}
+                    {item.revenue.toFixed(2)} {settings.currencySymbol}
                   </div>
                 </div>
               ))}
@@ -415,7 +415,7 @@ export const OwnerDashboard: React.FC = () => {
                   <div>
                     <div className="text-[11px] font-semibold text-slate-200">{c.name}</div>
                     <div className="text-[9px] text-slate-400">
-                      {c.todaySalesCount} sales ({settings.currencySymbol}{c.todaySalesTotal.toFixed(0)})
+                      {c.todaySalesCount} sales ({c.todaySalesTotal.toFixed(0)} {settings.currencySymbol})
                     </div>
                   </div>
                 </div>
@@ -470,7 +470,7 @@ export const OwnerDashboard: React.FC = () => {
                     </span>
                   </td>
                   <td className="py-2 px-2.5 font-bold text-emerald-400">
-                    {settings.currencySymbol}{sale.totalAmount.toFixed(2)}
+                    {sale.totalAmount.toFixed(2)} {settings.currencySymbol}
                   </td>
                   <td className="py-2 px-2.5 text-right">
                     <button

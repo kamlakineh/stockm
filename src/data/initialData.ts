@@ -381,7 +381,7 @@ export const initialSettings: StoreSettings = {
   phone: '+1 (800) 555-SMS1',
   email: 'contact@metromart.com',
   taxPercent: 10.0,
-  currencySymbol: '$',
+  currencySymbol: 'Birr',
   receiptHeaderMessage: 'Welcome to MetroMart Superstore!',
   receiptFooterMessage: 'Thank you for shopping with us! Please come again.',
   enableQrOnReceipt: true,
@@ -405,7 +405,7 @@ export const initialActivityLogs: ActivityLog[] = [
     action: 'SALE_COMPLETED',
     user: 'Alex Rivera',
     role: 'CASHIER',
-    details: 'Processed sale #REC-20260729-001 for $5.72',
+    details: 'Processed sale #REC-20260729-001 for 5.72 Birr',
     createdAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
   }
 ];

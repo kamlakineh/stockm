@@ -117,7 +117,7 @@ export const OwnerReports: React.FC = () => {
             <div className="p-3 bg-slate-900 border border-slate-800/80 rounded-xl">
               <span className="text-[10px] text-slate-400 font-semibold block mb-0.5">Gross Revenue</span>
               <div className="text-base sm:text-lg font-bold text-white">
-                {settings.currencySymbol}{totalRevenue.toFixed(2)}
+                {totalRevenue.toFixed(2)} {settings.currencySymbol}
               </div>
               <span className="text-[9px] text-emerald-400 mt-0.5 block">100% turnover</span>
             </div>
@@ -125,7 +125,7 @@ export const OwnerReports: React.FC = () => {
             <div className="p-3 bg-slate-900 border border-slate-800/80 rounded-xl">
               <span className="text-[10px] text-slate-400 font-semibold block mb-0.5">Cost of Goods Sold</span>
               <div className="text-base sm:text-lg font-bold text-slate-300">
-                {settings.currencySymbol}{totalCost.toFixed(2)}
+                {totalCost.toFixed(2)} {settings.currencySymbol}
               </div>
               <span className="text-[9px] text-slate-400 mt-0.5 block">Wholesale cost</span>
             </div>
@@ -133,7 +133,7 @@ export const OwnerReports: React.FC = () => {
             <div className="p-3 bg-slate-900 border border-slate-800/80 rounded-xl">
               <span className="text-[10px] text-slate-400 font-semibold block mb-0.5">Gross Profit Margin</span>
               <div className="text-base sm:text-lg font-bold text-emerald-400">
-                {settings.currencySymbol}{totalGrossProfit.toFixed(2)}
+                {totalGrossProfit.toFixed(2)} {settings.currencySymbol}
               </div>
               <span className="text-[9px] text-emerald-400 mt-0.5 block">
                 {((totalGrossProfit / (totalRevenue || 1)) * 100).toFixed(1)}% Gross Margin
@@ -143,7 +143,7 @@ export const OwnerReports: React.FC = () => {
             <div className="p-3 bg-slate-900 border border-slate-800/80 rounded-xl">
               <span className="text-[10px] text-slate-400 font-semibold block mb-0.5">Net Profit Estimate</span>
               <div className="text-base sm:text-lg font-bold text-indigo-400">
-                {settings.currencySymbol}{totalNetProfit.toFixed(2)}
+                {totalNetProfit.toFixed(2)} {settings.currencySymbol}
               </div>
               <span className="text-[9px] text-slate-400 mt-0.5 block">After overhead</span>
             </div>
@@ -163,7 +163,7 @@ export const OwnerReports: React.FC = () => {
                     <div key={idx} className="space-y-1">
                       <div className="flex justify-between text-xs font-semibold">
                         <span className="text-slate-300">{cat.name}</span>
-                        <span className="text-emerald-400">{settings.currencySymbol}{cat.val.toFixed(2)} ({percent.toFixed(0)}%)</span>
+                        <span className="text-emerald-400">{cat.val.toFixed(2)} {settings.currencySymbol} ({percent.toFixed(0)}%)</span>
                       </div>
                       <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
                         <div
@@ -238,7 +238,7 @@ export const OwnerReports: React.FC = () => {
                     <div>
                       <span className="text-slate-400 block text-[10px]">Total Revenue Generated</span>
                       <span className="font-bold text-emerald-400 text-base">
-                        {settings.currencySymbol}{cashierRev.toFixed(2)}
+                        {cashierRev.toFixed(2)} {settings.currencySymbol}
                       </span>
                     </div>
                   </div>
@@ -258,7 +258,7 @@ export const OwnerReports: React.FC = () => {
               <p className="text-xs text-slate-400">Configured Tax Rate: {settings.taxPercent}%</p>
             </div>
             <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-2xl font-bold text-lg">
-              Total Tax: {settings.currencySymbol}{totalTaxCollected.toFixed(2)}
+              Total Tax: {totalTaxCollected.toFixed(2)} {settings.currencySymbol}
             </div>
           </div>
 
@@ -278,9 +278,9 @@ export const OwnerReports: React.FC = () => {
                   <tr key={s.id}>
                     <td className="py-2.5 px-3 font-mono font-bold text-indigo-400">{s.receiptNo}</td>
                     <td className="py-2.5 px-3 text-slate-400">{new Date(s.createdAt).toLocaleDateString()}</td>
-                    <td className="py-2.5 px-3">{settings.currencySymbol}{s.subtotal.toFixed(2)}</td>
-                    <td className="py-2.5 px-3 font-bold text-amber-400">{settings.currencySymbol}{s.taxAmount.toFixed(2)}</td>
-                    <td className="py-2.5 px-3 font-bold text-emerald-400">{settings.currencySymbol}{s.totalAmount.toFixed(2)}</td>
+                    <td className="py-2.5 px-3">{s.subtotal.toFixed(2)} {settings.currencySymbol}</td>
+                    <td className="py-2.5 px-3 font-bold text-amber-400">{s.taxAmount.toFixed(2)} {settings.currencySymbol}</td>
+                    <td className="py-2.5 px-3 font-bold text-emerald-400">{s.totalAmount.toFixed(2)} {settings.currencySymbol}</td>
                   </tr>
                 ))}
               </tbody>

@@ -69,7 +69,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ sale, isOpen, onClos
   };
 
   const handleShareWhatsApp = () => {
-    const text = `*Receipt from ${settings.storeName}*\nReceipt: ${sale.receiptNo}\nTotal: ${settings.currencySymbol}${sale.totalAmount.toFixed(2)}\nCashier: ${sale.cashierName}\nThank you for shopping!`;
+    const text = `*Receipt from ${settings.storeName}*\nReceipt: ${sale.receiptNo}\nTotal: ${sale.totalAmount.toFixed(2)} ${settings.currencySymbol}\nCashier: ${sale.cashierName}\nThank you for shopping!`;
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
@@ -120,11 +120,11 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ sale, isOpen, onClos
               <div>
                 <div className="font-medium text-slate-200">{item.productName}</div>
                 <div className="text-[10px] text-slate-500">
-                  {item.quantity} x {settings.currencySymbol}{item.unitPrice.toFixed(2)}
+                  {item.quantity} x {item.unitPrice.toFixed(2)} {settings.currencySymbol}
                 </div>
               </div>
               <div className="font-semibold text-slate-200">
-                {settings.currencySymbol}{item.subtotal.toFixed(2)}
+                {item.subtotal.toFixed(2)} {settings.currencySymbol}
               </div>
             </div>
           ))}
@@ -134,29 +134,29 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ sale, isOpen, onClos
         <div className="space-y-1.5 text-xs text-slate-300 mb-5">
           <div className="flex justify-between">
             <span className="text-slate-400">Subtotal</span>
-            <span>{settings.currencySymbol}{sale.subtotal.toFixed(2)}</span>
+            <span>{sale.subtotal.toFixed(2)} {settings.currencySymbol}</span>
           </div>
           {sale.discountAmount > 0 && (
             <div className="flex justify-between text-emerald-400">
               <span>Discount</span>
-              <span>-{settings.currencySymbol}{sale.discountAmount.toFixed(2)}</span>
+              <span>-{sale.discountAmount.toFixed(2)} {settings.currencySymbol}</span>
             </div>
           )}
           <div className="flex justify-between">
             <span className="text-slate-400">Tax ({settings.taxPercent}%)</span>
-            <span>{settings.currencySymbol}{sale.taxAmount.toFixed(2)}</span>
+            <span>{sale.taxAmount.toFixed(2)} {settings.currencySymbol}</span>
           </div>
           <div className="flex justify-between font-bold text-sm text-white pt-2 border-t border-slate-800">
             <span>TOTAL</span>
-            <span className="text-emerald-400">{settings.currencySymbol}{sale.totalAmount.toFixed(2)}</span>
+            <span className="text-emerald-400">{sale.totalAmount.toFixed(2)} {settings.currencySymbol}</span>
           </div>
           <div className="flex justify-between text-[11px] text-slate-400 pt-1">
             <span>Amount Tendered</span>
-            <span>{settings.currencySymbol}{sale.amountTendered.toFixed(2)}</span>
+            <span>{sale.amountTendered.toFixed(2)} {settings.currencySymbol}</span>
           </div>
           <div className="flex justify-between text-[11px] text-slate-400">
             <span>Change Returned</span>
-            <span>{settings.currencySymbol}{sale.changeGiven.toFixed(2)}</span>
+            <span>{sale.changeGiven.toFixed(2)} {settings.currencySymbol}</span>
           </div>
         </div>
 

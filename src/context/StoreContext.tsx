@@ -134,14 +134,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [ownerTab, setOwnerTab] = useState<number>(0);
   const [cashierTab, setCashierTab] = useState<number>(0);
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const logout = () => {
     setIsAuthenticated(false);
   };
 
   const loginAsOwner = (pin?: string) => {
-    if (!pin || pin === settings.ownerPin || pin === '0000' || pin === '1234') {
+    if (!pin) return false;
+    const ownerProf = (profiles || cashiers || []).find(p => p.role === 'OWNER');
+    const validPins = [ownerProf?.pin, settings?.ownerPin].filter(Boolean);
+    if (validPins.includes(pin)) {
       setRole('OWNER');
       setIsAuthenticated(true);
       setOwnerTab(0);
@@ -151,11 +154,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const loginAsCashier = (cashierId: string, pin?: string) => {
-    const target = cashiers.find(c => c.id === cashierId);
+    if (!pin || !cashierId) return false;
+    const target = (profiles || cashiers || []).find(
+      c => c.id === cashierId || c.employeeId?.toLowerCase() === cashierId.toLowerCase()
+    );
     if (!target) return false;
-    if (!pin || pin === target.pin || pin === '1234' || pin === '5678') {
+    if (target.pin && pin === target.pin) {
       setCurrentCashier(target);
-      setRole('CASHIER');
+      setRole(target.role || 'CASHIER');
       setIsAuthenticated(true);
       setCashierTab(0);
       return true;
@@ -218,25 +224,26 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     async function loadBackendData() {
       try {
         const res = await fetch('/api/data');
-        if (res.ok) {
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && contentType.includes('application/json')) {
           const json = await res.json();
           if (json.data) {
             if (json.source === 'neon') {
               setDbSource('neon');
             }
-            if (json.data.products?.length) setProducts(json.data.products);
-            if (json.data.categories?.length) setCategories(json.data.categories);
-            if (json.data.suppliers?.length) setSuppliers(json.data.suppliers);
-            if (json.data.sales?.length) setSales(json.data.sales);
-            if (json.data.profiles?.length) {
+            if (Array.isArray(json.data.products)) setProducts(json.data.products);
+            if (Array.isArray(json.data.categories)) setCategories(json.data.categories);
+            if (Array.isArray(json.data.suppliers)) setSuppliers(json.data.suppliers);
+            if (Array.isArray(json.data.sales)) setSales(json.data.sales);
+            if (Array.isArray(json.data.profiles) && json.data.profiles.length > 0) {
               setProfiles(json.data.profiles);
               setCashiers(json.data.profiles);
-            } else if (json.data.cashiers?.length) {
+            } else if (Array.isArray(json.data.cashiers) && json.data.cashiers.length > 0) {
               setProfiles(json.data.cashiers);
               setCashiers(json.data.cashiers);
             }
-            if (json.data.stockMovements?.length) setStockMovements(json.data.stockMovements);
-            if (json.data.activityLogs?.length) setActivityLogs(json.data.activityLogs);
+            if (Array.isArray(json.data.stockMovements)) setStockMovements(json.data.stockMovements);
+            if (Array.isArray(json.data.activityLogs)) setActivityLogs(json.data.activityLogs);
             if (json.data.settings) setSettings(json.data.settings);
           }
         }
@@ -276,22 +283,30 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [products, categories, suppliers, sales, heldSales, profiles, notifications, stockMovements, settings, activityLogs]);
 
-  // Upload image to UploadThing / API
+  // Upload image to API with local FileReader dataURL fallback
   const uploadImage = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const json = await res.json();
+        if (json.url) return json.url;
+      }
+    } catch (e) {
+      console.warn('API upload unavailable, using Data URL fallback', e);
+    }
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
     });
-    if (!res.ok) {
-      throw new Error('Image upload failed');
-    }
-    const json = await res.json();
-    if (!json.url) {
-      throw new Error('No URL returned from upload');
-    }
-    return json.url;
   };
 
   const logActivity = (action: string, details: string) => {
@@ -622,6 +637,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const prod = products.find(p => p.id === id);
     setProducts(prev => prev.filter(p => p.id !== id));
     logActivity('DELETE_PRODUCT', `Deleted product: ${prod?.name || id}`);
+    fetch(`/api/products/${id}`, { method: 'DELETE' }).catch(e => console.warn('Delete product API error', e));
   };
 
   const duplicateProduct = (id: string) => {
@@ -697,6 +713,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const deleteCategory = (id: string) => {
     setCategories(prev => prev.filter(c => c.id !== id));
+    fetch(`/api/categories/${id}`, { method: 'DELETE' }).catch(e => console.warn('Delete category API error', e));
   };
 
   const addSupplier = (supData: Omit<Supplier, 'id' | 'suppliedCount'>) => {
@@ -715,6 +732,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const deleteSupplier = (id: string) => {
     setSuppliers(prev => prev.filter(s => s.id !== id));
+    fetch(`/api/suppliers/${id}`, { method: 'DELETE' }).catch(e => console.warn('Delete supplier API error', e));
   };
 
   // Profile & Cashier Management
@@ -739,6 +757,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setProfiles(prev => prev.filter(c => c.id !== id));
     setCashiers(prev => prev.filter(c => c.id !== id));
     logActivity('DELETE_PROFILE', `Deleted profile ID: ${id}`);
+    fetch(`/api/profiles/${id}`, { method: 'DELETE' }).catch(e => console.warn('Delete profile API error', e));
   };
 
   const addCashier = (cashData: Omit<CashierUser, 'id' | 'todaySalesCount' | 'todaySalesTotal'>) => {
@@ -793,6 +812,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setActivityLogs(initialActivityLogs);
     localStorage.removeItem(LOCAL_STORAGE_KEY);
     logActivity('SYSTEM_RESET', 'Database reset to default seed state');
+    fetch('/api/reset', { method: 'POST' }).catch(e => console.warn('Reset API error', e));
   };
 
   const exportDatabaseJSON = () => {

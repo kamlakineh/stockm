@@ -93,7 +93,7 @@ export const CashierHistory: React.FC = () => {
 
               <div className="text-right">
                 <div className="font-bold text-xs sm:text-sm text-emerald-400">
-                  {settings.currencySymbol}{s.totalAmount.toFixed(2)}
+                  {s.totalAmount.toFixed(2)} {settings.currencySymbol}
                 </div>
                 <span className="text-[9px] text-indigo-400 font-semibold flex items-center gap-1 justify-end mt-0.5">
                   <Receipt className="w-3 h-3" /> Receipt

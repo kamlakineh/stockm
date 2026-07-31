@@ -17,27 +17,28 @@ export const LoginPage: React.FC = () => {
     const cleanId = userIdInput.trim();
     const cleanPin = pinInput.trim();
 
-    if (!cleanId && !cleanPin) {
-      setErrorMsg('Please enter User ID and PIN.');
+    if (!cleanId || !cleanPin) {
+      setErrorMsg('Please enter both User ID and PIN.');
       return;
     }
 
     const upperId = cleanId.toUpperCase();
 
-    // 1. Explicit Owner ID or Admin
-    if (upperId === 'OWNER' || upperId === 'ADMIN' || upperId === 'OWNER-1') {
+    // 1. Check direct Owner keyword login
+    if (upperId === 'OWNER' || upperId === 'ADMIN' || upperId === 'OWNER-001' || upperId === 'OWNER-1') {
       const success = loginAsOwner(cleanPin);
       if (success) return;
       setErrorMsg('Invalid PIN for Store Owner.');
       return;
     }
 
-    // 2. Check if Profile matching ID, Employee ID, or Name
+    // 2. Check matching profile by ID, Employee ID, Name, or Email
     const matchedProfile = userProfiles.find(
       p =>
         p.employeeId.toLowerCase() === cleanId.toLowerCase() ||
         p.id.toLowerCase() === cleanId.toLowerCase() ||
-        p.name.toLowerCase() === cleanId.toLowerCase()
+        p.name.toLowerCase() === cleanId.toLowerCase() ||
+        p.email.toLowerCase() === cleanId.toLowerCase()
     );
 
     if (matchedProfile) {
@@ -53,17 +54,7 @@ export const LoginPage: React.FC = () => {
       return;
     }
 
-    // 3. Fallback: try owner login with PIN
-    if (loginAsOwner(cleanPin)) {
-      return;
-    }
-
-    // 4. Fallback: try cashier login with PIN
-    if (cashiers.length > 0 && loginAsCashier(cashiers[0].id, cleanPin)) {
-      return;
-    }
-
-    setErrorMsg('Invalid User ID or PIN. Please try again.');
+    setErrorMsg('Invalid User ID or PIN. Access denied.');
   };
 
   return (

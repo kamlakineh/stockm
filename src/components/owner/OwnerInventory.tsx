@@ -387,11 +387,11 @@ export const OwnerInventory: React.FC = () => {
                     <div className="flex items-center justify-between p-2.5 bg-slate-800/60 rounded-xl border border-slate-800 text-xs mb-3">
                       <div>
                         <span className="text-[10px] text-slate-400 block">Cost</span>
-                        <span className="font-semibold text-slate-300">{settings.currencySymbol}{prod.costPrice.toFixed(2)}</span>
+                        <span className="font-semibold text-slate-300">{prod.costPrice.toFixed(2)} {settings.currencySymbol}</span>
                       </div>
                       <div className="text-right">
                         <span className="text-[10px] text-slate-400 block">Selling Price</span>
-                        <span className="font-bold text-emerald-400 text-sm">{settings.currencySymbol}{prod.sellingPrice.toFixed(2)}</span>
+                        <span className="font-bold text-emerald-400 text-sm">{prod.sellingPrice.toFixed(2)} {settings.currencySymbol}</span>
                       </div>
                     </div>
                   </div>
