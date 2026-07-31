@@ -125,8 +125,6 @@ interface StoreContextType {
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY = 'sms_store_database_v1';
-
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [role, setRole] = useState<Role>('OWNER');
   const [ownerDeviceView, setOwnerDeviceView] = useState<'DESKTOP' | 'MOBILE_PREVIEW'>('DESKTOP');
@@ -169,46 +167,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return false;
   };
 
-  // Load or initialize state from localStorage
-  const loadInitialState = () => {
-    try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.profiles) return parsed;
-        if (parsed.cashiers) return { ...parsed, profiles: parsed.cashiers };
-      }
-    } catch (e) {
-      console.error('Failed to load local storage database', e);
-    }
-    return {
-      products: initialProducts,
-      categories: initialCategories,
-      suppliers: initialSuppliers,
-      sales: initialSales,
-      heldSales: [],
-      profiles: initialProfiles,
-      cashiers: initialCashiers,
-      notifications: initialNotifications,
-      stockMovements: initialStockMovements,
-      settings: initialSettings,
-      activityLogs: initialActivityLogs,
-    };
-  };
-
-  const initialState = loadInitialState();
-
-  const [products, setProducts] = useState<Product[]>(initialState.products);
-  const [categories, setCategories] = useState<Category[]>(initialState.categories);
-  const [suppliers, setSuppliers] = useState<Supplier[]>(initialState.suppliers);
-  const [sales, setSales] = useState<Sale[]>(initialState.sales);
-  const [heldSales, setHeldSales] = useState<HeldSale[]>(initialState.heldSales || []);
-  const [profiles, setProfiles] = useState<Profile[]>(initialState.profiles || initialState.cashiers || initialProfiles);
-  const [cashiers, setCashiers] = useState<Profile[]>(initialState.profiles || initialState.cashiers || initialProfiles);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(initialState.notifications);
-  const [stockMovements, setStockMovements] = useState<StockMovement[]>(initialState.stockMovements);
-  const [settings, setSettings] = useState<StoreSettings>(initialState.settings);
-  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(initialState.activityLogs);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
+  const [sales, setSales] = useState<Sale[]>(initialSales);
+  const [heldSales, setHeldSales] = useState<HeldSale[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>(initialProfiles);
+  const [cashiers, setCashiers] = useState<Profile[]>(initialProfiles);
+  const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
+  const [stockMovements, setStockMovements] = useState<StockMovement[]>(initialStockMovements);
+  const [settings, setSettings] = useState<StoreSettings>(initialSettings);
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(initialActivityLogs);
 
   const [currentCashier, setCurrentCashier] = useState<Profile>(profiles[0] || initialProfiles[0]);
 
@@ -254,33 +223,27 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     loadBackendData();
   }, []);
 
-  // Persist changes to localStorage and sync to backend API
+  // Sync changes directly to backend database API (no browser localStorage used)
   useEffect(() => {
-    try {
-      const dataToSave = {
-        products,
-        categories,
-        suppliers,
-        sales,
-        heldSales,
-        profiles,
-        cashiers: profiles,
-        notifications,
-        stockMovements,
-        settings,
-        activityLogs,
-      };
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToSave));
+    const dataToSave = {
+      products,
+      categories,
+      suppliers,
+      sales,
+      heldSales,
+      profiles,
+      cashiers: profiles,
+      notifications,
+      stockMovements,
+      settings,
+      activityLogs,
+    };
 
-      // Sync to API
-      fetch('/api/sync-state', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToSave)
-      }).catch(err => console.log('Backend sync error:', err));
-    } catch (e) {
-      console.error('Error writing to local storage', e);
-    }
+    fetch('/api/sync-state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dataToSave)
+    }).catch(err => console.log('Backend sync error:', err));
   }, [products, categories, suppliers, sales, heldSales, profiles, notifications, stockMovements, settings, activityLogs]);
 
   // Upload image to API with local FileReader dataURL fallback
@@ -810,7 +773,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setStockMovements(initialStockMovements);
     setSettings(initialSettings);
     setActivityLogs(initialActivityLogs);
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
     logActivity('SYSTEM_RESET', 'Database reset to default seed state');
     fetch('/api/reset', { method: 'POST' }).catch(e => console.warn('Reset API error', e));
   };
