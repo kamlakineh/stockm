@@ -1,6 +1,0 @@
-{
-  "name": "Store Management System",
-  "description": "Comprehensive retail store management platform for Owners and Cashiers with POS, barcode scanning, inventory tracking, financial analytics, and real-time synchronization.",
-  "requestFramePermissions": ["camera"],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
